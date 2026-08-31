@@ -1,5 +1,6 @@
 {
     "robloxLsp.diagnostics.disable": [
         "undefined-global"
-    ]
+    ],
+    "luau-lsp.studioPlugin.enabled": true
 }

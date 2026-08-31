@@ -246,7 +246,7 @@ return function(icon, Icon)
 			local widgetMinimumWidth = widget:GetAttribute("MinimumWidth")
 			local widgetMinimumHeight = widget:GetAttribute("MinimumHeight")
 			local widgetBorderSize = widget:GetAttribute("BorderSize")
-			local widgetWidth = math.clamp(initialWidgetWidth, widgetMinimumWidth, viewportX)
+			local widgetWidth = math.clamp(initialWidgetWidth, widgetMinimumWidth, math.max(viewportX, widgetMinimumWidth))
 			local menuIcons = icon.menuIcons
 			local additionalWidth = 0
 			local hasMenu = #menuIcons > 0
@@ -273,7 +273,11 @@ return function(icon, Icon)
 			local preWidth = math.max(widgetWidth-additionalWidth, widgetMinimumWidth)
 			local spotWidth = preWidth-(widgetBorderSize*2)
 			local menuWidth = menu:GetAttribute("MenuWidth")
-			local totalMenuWidth = menuWidth and menuWidth + spotWidth + menuUIListLayout.Padding.Offset + 10
+			local totalMenuWidth = menuWidth and menuWidth + spotWidth + menuUIListLayout.Padding.Offset + 10 or nil
+			if icon.isGroupHandler then
+				totalMenuWidth = menuWidth
+				widgetWidth = menuWidth
+			end
 			if totalMenuWidth then
 				local maxWidth = menu:GetAttribute("MaxWidth")
 				if maxWidth then
@@ -290,6 +294,9 @@ return function(icon, Icon)
 			local spotWidthMax = math.max(spotWidth, getItemWidth(iconSpot), iconSpot.AbsoluteSize.X)
 			local widgetWidthMax = math.max(widgetWidth, getItemWidth(widget), widget.AbsoluteSize.X)
 			local SPEED = 750
+			if icon.isGroupHandler then
+				SPEED = math.huge -- Unibar groups HAS to update instantly
+			end
 			local spotTweenInfo = TweenInfo.new(spotWidthMax/SPEED, style, direction)
 			local widgetTweenInfo = TweenInfo.new(widgetWidthMax/SPEED, style, direction)
 			TweenService:Create(iconSpot, spotTweenInfo, {
@@ -313,6 +320,7 @@ return function(icon, Icon)
 			for i = 1, widgetTweenInfo.Time * 100 do
 				task.delay(i/100, function()
 					Icon.iconChanged:Fire(icon)
+					icon:updateParent("handleSizeChange")
 				end)
 			end
 			task.delay(widgetTweenInfo.Time-0.2, function()
@@ -323,7 +331,7 @@ return function(icon, Icon)
 					end
 				end)
 			end)
-			icon:updateParent()
+			icon:updateParent("handleLabelAndImageChangesUnstaggered")
 		end)
 	end
 	local Utility = require(script.Parent.Parent.Utility)

@@ -80,6 +80,14 @@ type Methods = {
 			return nil :: any
 		end
 	),
+	setGroup: typeof(
+		--[[
+			Sets the group to the icon (uses setFixedMenu in the backend)
+		]]
+		function(self: Icon, groupName: string): Icon
+			return nil :: any
+		end
+	),
 	getInstance: typeof(
 		--[[
 			Returns the first descendant found within the widget of name <code>instanceName</code>.

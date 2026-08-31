@@ -4,5 +4,5 @@ registry = "test"
 
 [[package]]
 name = "1foreverhd/topbarplus"
-version = "3.0.0"
+version = "3.4.0"
 dependencies = []

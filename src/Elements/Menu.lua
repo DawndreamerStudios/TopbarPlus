@@ -124,6 +124,11 @@ return function(icon)
 		end)
 		menuJanitor:add(icon.updateMenu:Connect(function()
 			local maxIcons = menu:GetAttribute("MaxIcons")
+			if icon.isGroupHandler then
+				maxIcons = math.huge
+
+				menuUIListLayout.Padding = UDim.new(0, -2)
+			end
 			if not maxIcons then
 				return
 			end
@@ -137,7 +142,7 @@ return function(icon)
 			table.sort(orderedInstances, function(groupA, groupB)
 				return groupA[2] < groupB[2]
 			end)
-			local totalWidth = 0
+			local totalWidth = icon.isGroupHandler and 10 or 0
 			for i = 1, maxIcons do
 				local group = orderedInstances[i]
 				if not group then
@@ -149,6 +154,15 @@ return function(icon)
 			end
 			menu:SetAttribute("MenuWidth", totalWidth)
 		end))
+		
+		if icon.isGroupHandler and menu:FindFirstChild("MenuPadding") == nil then
+			local menuPadding = Instance.new("UIPadding")
+			menuPadding.Name = "MenuPadding"
+			menuPadding.PaddingLeft = UDim.new(0, 4)
+			menuPadding.PaddingRight = UDim.new(0, 4)
+			menuPadding.Parent = menu
+		end
+		
 		local function startMenuUpdate()
 			task.delay(0.1, function()
 				icon.startMenuUpdate:Fire()

@@ -297,6 +297,7 @@ return function(icon)
 	local RECOVER_PERIOD = 0.3
 	local Icon = require(icon.iconModule)
 	captionJanitor:add(icon.stateChanged:Connect(function(stateName)
+		icon:updateParent("stateChanged")
 		if stateName == "Viewing" then
 			local lastClock = Icon.captionLastClosedClock
 			local clockDifference = (lastClock and os.clock() - lastClock) or 999

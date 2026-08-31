@@ -113,6 +113,9 @@ return function(icon)
 	local function updateMaxIcons()
 		--icon:modifyTheme({"Dropdown", "Visible", icon.isSelected})
 		local maxIcons = dropdown:GetAttribute("MaxIcons")
+		if icon.isGroupHandler then
+			maxIcons = math.huge
+		end
 		if not maxIcons then return 0 end
 		local children = {}
 		for _, child in pairs(dropdownScroller:GetChildren()) do

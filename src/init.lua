@@ -97,6 +97,7 @@ Icon.baseDisplayOrder = 10
 Icon.baseTheme = require(themes.Default)
 Icon.isOldTopbar = false -- Logic has been moved to Container
 Icon.iconsDictionary = iconsDict
+Icon.groupHandlers = {}
 Icon.insetHeightChanged = Signal.new()
 Icon.container = require(elements.Container)(Icon)
 Icon.topbarEnabled = true
@@ -107,8 +108,17 @@ Icon.iconChanged = Signal.new()
 
 
 -- PUBLIC FUNCTIONS
-function Icon.getIcons()
-	return Icon.iconsDictionary
+function Icon.getIcons(filterGroups: boolean?)
+	if filterGroups == nil then
+		filterGroups = true
+	end
+	
+	local iconsArray = {}
+	for _, icon in Icon.iconsDictionary do
+		if icon.isGroupHandler and filterGroups then continue end
+		table.insert(iconsArray, icon)
+	end
+	return iconsArray
 end
 
 function Icon.getIconByUID(UID)
@@ -171,7 +181,6 @@ task.defer(function()
 	for _, screenGui in pairs(Icon.container) do
 		screenGui.Parent = playerGui
 	end
-	require(iconModule.Attribute)
 end)
 
 
@@ -252,6 +261,8 @@ function Icon.new()
 	self.dropdownIcons = {}
 	self.childIconsDict = {}
 	self.creationTime = os.clock()
+	self.groupName = nil
+	self.isGroupHandler = false
 
 	-- Widget is the new name for an icon
 	local widget = janitor:add(require(elements.Widget)(self, Icon))
@@ -515,6 +526,7 @@ function Icon:setState(incomingStateName, fromSource, sourceIcon)
 		self:_setToggleItemsVisible(true, fromSource, sourceIcon)
 	end
 	self.stateChanged:Fire(stateName, fromSource, sourceIcon)
+	self:updateParent("setState")
 end
 
 function Icon:getInstance(name)
@@ -633,10 +645,25 @@ function Icon:refresh()
 	return self
 end
 
-function Icon:updateParent()
+function Icon:updateParent(typeOfUpdate:string)
+	if self.isGroupHandler then return end
+	
 	local parentIcon = Icon.getIconByUID(self.parentIconUID)
 	if parentIcon then
 		parentIcon.updateSize:Fire()
+		if parentIcon.isGroupHandler and typeOfUpdate == "setEnabled" then
+			local visibleIcons = 0
+			for i, otherIconUID in parentIcon.menuIcons do
+				local otherIcon = Icon.getIconByUID(otherIconUID)
+				if otherIcon.isEnabled then visibleIcons += 1 end
+			end
+			
+			local wantedVisible = visibleIcons > 0
+			
+			if parentIcon.isEnabled ~= wantedVisible then
+				parentIcon:setEnabled(wantedVisible)
+			end
+		end
 	end
 end
 
@@ -690,7 +717,7 @@ function Icon:setEnabled(bool)
 	self.isEnabled = bool
 	self.enabled = self.isEnabled
 	self.widget.Visible = bool
-	self:updateParent()
+	self:updateParent("setEnabled")
 	return self
 end
 
@@ -1041,10 +1068,31 @@ function Icon:setMenu(arrayOfIcons)
 end
 
 function Icon:setFixedMenu(arrayOfIcons)
-	self:freezeMenu(arrayOfIcons)
+	self:freezeMenu()
 	self:setMenu(arrayOfIcons)
 end
 Icon.setFrozenMenu = Icon.setFixedMenu
+
+function Icon:setGroup(name: string)
+	self.groupName = name
+	if self.isGroupHandler then return self end
+	
+	local groupHandler = Icon.groupHandlers[name]
+	if groupHandler == nil then
+		groupHandler = Icon.new()
+			:align(self.alignment)
+			:setLabel(name)
+			:lock()
+		groupHandler.isGroupHandler = true
+			
+		Icon.groupHandlers[name] = groupHandler
+	end
+	
+	self:joinMenu(groupHandler)
+	groupHandler:freezeMenu()
+	
+	return self
+end
 
 function Icon:freezeMenu()
 	-- A frozen menu is a menu which is permanently locked in the
@@ -1210,7 +1258,7 @@ function Icon:convertLabelToNumberSpinner(numberSpinner, callback)
 			adjustSize()
 		end))
 
-		self:updateParent()
+		self:updateParent("convertLabelToNumberSpinner")
 
 		-- This corrects text to the size of a normal label
 		numberSpinner.Name = "LabelSpinner"
@@ -1228,8 +1276,6 @@ function Icon:convertLabelToNumberSpinner(numberSpinner, callback)
 	end)
 	return self
 end
-
-
 
 -- DESTROY/CLEANUP
 function Icon:destroy()
