@@ -125,7 +125,7 @@ return function(icon)
 	caret.ImageColor3 = CAPTION_COLOR
 	caret.AnchorPoint = Vector2.new(0, 0.5)
 	caret.BackgroundTransparency = 1
-	caret.Position = UDim2.new(0, 0, 0, 4)
+	caret.Position = UDim2.fromOffset(0, 4)
 	caret.Size = UDim2.fromOffset(16, 8)
 	caret.ZIndex = 12
 	caret.Parent = caption

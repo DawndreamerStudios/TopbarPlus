@@ -72,7 +72,7 @@ return function(icon, Icon)
 	overlay.Name = "IconOverlay"
 	overlay.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	overlay.ZIndex = iconSpot.ZIndex + 1
-	overlay.Size = UDim2.new(1, 0, 1, 0)
+	overlay.Size = UDim2.fromScale(1, 1)
 	overlay.Position = UDim2.new(0, 0, 0, 0)
 	overlay.AnchorPoint = Vector2.new(0, 0)
 	overlay.Visible = false
@@ -124,7 +124,7 @@ return function(icon, Icon)
 	paddingCenter.Name = "PaddingCenter"
 	paddingCenter.LayoutOrder = 3
 	paddingCenter.ZIndex = 5
-	paddingCenter.Size = UDim2.new(0, 0, 1, 0)
+	paddingCenter.Size = UDim2.fromScale(0, 1)
 	paddingCenter.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	paddingCenter.BackgroundTransparency = 1
 	paddingCenter.BorderSizePixel = 0
@@ -146,9 +146,9 @@ return function(icon, Icon)
 	iconLabelContainer.LayoutOrder = 4
 	iconLabelContainer.ZIndex = 3
 	iconLabelContainer.AnchorPoint = Vector2.new(0, 0.5)
-	iconLabelContainer.Size = UDim2.new(0, 0, 0.5, 0)
+	iconLabelContainer.Size = UDim2.fromScale(0, 0.5)
 	iconLabelContainer.BackgroundTransparency = 1
-	iconLabelContainer.Position = UDim2.new(0.5, 0, 0.5, 0)
+	iconLabelContainer.Position = UDim2.fromScale(0.5, 0.5)
 	iconLabelContainer.Parent = contents
 
 	local iconLabel = Instance.new("TextLabel")
@@ -177,7 +177,7 @@ return function(icon, Icon)
 	iconImage.LayoutOrder = 2
 	iconImage.ZIndex = 15
 	iconImage.AnchorPoint = Vector2.new(0, 0.5)
-	iconImage.Size = UDim2.new(0, 0, 0.5, 0)
+	iconImage.Size = UDim2.fromScale(0, 0.5)
 	iconImage.BackgroundTransparency = 1
 	iconImage.Position = UDim2.new(0, 11, 0.5, 0)
 	iconImage.ScaleType = Enum.ScaleType.Stretch
@@ -192,7 +192,7 @@ return function(icon, Icon)
 
 	local TweenService = game:GetService("TweenService")
 	local resizingCount = 0
-	local function handleLabelAndImageChangesUnstaggered(forceUpdateString)
+	local function handleLabelAndImageChangesUnstaggered(_)
 
 		-- We defer changes by a frame to eliminate all but 1 requests which
 		-- could otherwise stack up to 20+ requests in a single frame
@@ -358,7 +358,7 @@ return function(icon, Icon)
 			handleLabelAndImageChanges()
 			if firstTimeSettingFontFace then
 				firstTimeSettingFontFace = false
-				for i = 1, 10 do
+				for _ = 1, 10 do
 					task.wait(1)
 					handleLabelAndImageChanges()
 				end
@@ -370,7 +370,7 @@ return function(icon, Icon)
 			local borderOffset = widget:GetAttribute("BorderSize")
 			local alignment = icon.alignment
 			local alignmentOffset = (iconSpot.Visible == false and 0) or (alignment == "Right" and -borderOffset) or borderOffset
-			menu.Position = UDim2.new(0, alignmentOffset, 0, 0)
+			menu.Position = UDim2.fromOffset(alignmentOffset, 0)
 			menuGap.Size = UDim2.fromOffset(borderOffset, 0)
 			menuUIListLayout.Padding = UDim.new(0, 0)
 			handleLabelAndImageChanges()
@@ -422,7 +422,7 @@ return function(icon, Icon)
 	iconImageScale.Name = "IconImageScale"
 	iconImageScale.Parent = iconImage
 	iconImageScale:GetPropertyChangedSignal("Value"):Connect(function()
-		iconImage.Size = UDim2.new(iconImageScale.Value, 0, iconImageScale.Value, 0)
+		iconImage.Size = UDim2.fromScale(iconImageScale.Value, iconImageScale.Value)
 	end)
 
 	local UIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")

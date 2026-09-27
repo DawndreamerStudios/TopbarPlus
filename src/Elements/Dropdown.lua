@@ -85,12 +85,12 @@ return function(icon)
 			{"Widget", "MinimumWidth", 190},
 			{"Widget", "MinimumHeight", 58},
 			{"IconLabel", "TextSize", 20},
-			{"IconOverlay", "Size", UDim2.new(1, 0, 1, 0)},
+			{"IconOverlay", "Size", UDim2.fromScale(1, 1)},
 			{"PaddingLeft", "Size", UDim2.fromOffset(25, 0)},
 			{"Notice", "Position", UDim2.new(1, -24, 0, 5)},
 			{"ContentsList", "HorizontalAlignment", Enum.HorizontalAlignment.Left},
 			{"Selection", "Size", UDim2.new(1, -PADDING, 1, -PADDING)},
-			{"Selection", "Position", UDim2.new(0, PADDING/2, 0, PADDING/2)},
+			{"Selection", "Position", UDim2.fromOffset(PADDING/2, PADDING/2)},
 		})
 		task.defer(function()
 			childIcon.joinJanitor:add(function()
@@ -99,12 +99,12 @@ return function(icon)
 		end)
 	end)
 	icon.dropdownSet:Connect(function(arrayOfIcons)
-		for i, otherIconUID in pairs(icon.dropdownIcons) do
+		for _, otherIconUID in pairs(icon.dropdownIcons) do
 			local otherIcon = Icon.getIconByUID(otherIconUID)
 			otherIcon:destroy()
 		end
 		if type(arrayOfIcons) == "table" then
-			for i, otherIcon in pairs(arrayOfIcons) do
+			for _, otherIcon in pairs(arrayOfIcons) do
 				otherIcon:joinDropdown(icon)
 			end
 		end
@@ -124,7 +124,9 @@ return function(icon)
 			end
 		end
 
-		table.sort(children, function(a, b) return a.AbsolutePosition.Y < b.AbsolutePosition.Y end)
+		table.sort(children, function(a, b) 
+			return a.AbsolutePosition.Y < b.AbsolutePosition.Y
+		end)
 		local totalHeight = 0
 		local maxIconsRoundedUp = math.ceil(maxIcons)
 		for i = 1, maxIconsRoundedUp do
@@ -176,16 +178,16 @@ return function(icon)
 			local height = updateMaxIcons()
 			dropdown.Visible = true
 			dropdown.BackgroundTransparency = 0 -- no transparency so it looks solid
-			dropdown.Size = UDim2.new(0, dropdown.Size.X.Offset, 0, 0) -- reset height to 0 before tween
+			dropdown.Size = UDim2.fromOffset(dropdown.Size.X.Offset, 0) -- reset height to 0 before tween
 
-			openTween = TweenService:Create(dropdown, tweenInfo, {Size = UDim2.new(0, dropdown.Size.X.Offset, 0, height)})
+			openTween = TweenService:Create(dropdown, tweenInfo, {Size = UDim2.fromOffset(dropdown.Size.X.Offset, height)})
 			openTween:Play()
 			openTween.Completed:Connect(function()
 				openTween = nil
 			end)
 		else
 			local closeTweenInfo = TweenInfo.new(0)
-			closeTween = TweenService:Create(dropdown, closeTweenInfo, {Size = UDim2.new(0, dropdown.Size.X.Offset, 0, 0)})
+			closeTween = TweenService:Create(dropdown, closeTweenInfo, {Size = UDim2.fromOffset(dropdown.Size.X.Offset, 0)})
 			closeTween:Play()
 			closeTween.Completed:Connect(function()
 				closeTween = nil
@@ -213,7 +215,7 @@ return function(icon)
 		
 		local height = updateMaxIcons()
 
-		openTween = TweenService:Create(dropdown, tweenInfo, {Size = UDim2.new(0, dropdown.Size.X.Offset, 0, height)})
+		openTween = TweenService:Create(dropdown, tweenInfo, {Size = UDim2.fromOffset(dropdown.Size.X.Offset, height)})
 		openTween:Play()
 		openTween.Completed:Connect(function()	
 			openTween = nil
@@ -248,7 +250,9 @@ return function(icon)
 				table.insert(orderedInstances, {child, child.AbsolutePosition.Y})
 			end
 		end
-		table.sort(orderedInstances, function(a, b) return a[2] < b[2] end)
+		table.sort(orderedInstances, function(a, b)
+			return a[2] < b[2]
+		end)
 
 		local totalHeight = 0
 		local hasSetNextSelection = false

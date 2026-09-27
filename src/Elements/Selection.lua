@@ -1,4 +1,5 @@
-return function(Icon)
+-- First Argument here is the icon module itself
+return function(_)
 
 	-- Credit to lolmansReturn and Canary Software for
 	-- retrieving these values

@@ -116,7 +116,7 @@ return function(Icon)
 	insetChanged:Connect(function()
 		local holderY = if isUsingVR then 36 else 56
 		local holderSize = if isConsoleScreen then UDim2.new(1, 0, 0, holderY) else UDim2.new(1, 0, 1, ySizeOffset)
-		holders.Position = UDim2.new(0, 0, 0, yDownOffset)
+		holders.Position = UDim2.fromOffset(0, yDownOffset)
 		holders.Size = holderSize
 	end)
 	holders.Visible = true

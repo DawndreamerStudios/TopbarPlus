@@ -55,7 +55,7 @@ return {
 	{"Dropdown", "MaxIcons", 4.5, "Deselected"},
 	{"Menu", "MaxIcons", 4, "Deselected"},
 	{"Notice", "Position", UDim2.new(1, -12, 0, -1), "Deselected"},
-	{"Notice", "Size", UDim2.new(0, 20, 0, 20), "Deselected"},
+	{"Notice", "Size", UDim2.fromOffset(20, 20), "Deselected"},
 	{"NoticeLabel", "TextSize", 13, "Deselected"},
 	{"PaddingLeft", "Size", UDim2.new(0, 9, 1, 0), "Deselected"},
 	{"PaddingRight", "Size", UDim2.new(0, 11, 1, 0), "Deselected"},

@@ -72,7 +72,7 @@ function Overflow.start(incomingIcon)
 	end)
 end
 
-function Overflow.getWidth(icon, getMaxWidth)
+function Overflow.getWidth(icon)
 	local widget = icon.widget
 	return widget:GetAttribute("TargetWidth") or widget.AbsoluteSize.X
 end

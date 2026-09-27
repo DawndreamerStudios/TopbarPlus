@@ -1,4 +1,5 @@
-return function(icon, Icon)
+-- Second argument here is the icon module
+return function(icon, _)
 
 	local widget = icon.widget
 	local contents = icon:getInstance("Contents")
@@ -6,10 +7,10 @@ return function(icon, Icon)
 	indicator.Name = "Indicator"
 	indicator.LayoutOrder = 9999999
 	indicator.ZIndex = 6
-	indicator.Size = UDim2.new(0, 42, 0, 42)
+	indicator.Size = UDim2.fromOffset(42, 42)
 	indicator.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	indicator.BackgroundTransparency = 1
-	indicator.Position = UDim2.new(1, 0, 0.5, 0)
+	indicator.Position = UDim2.fromScale(1, 0.5)
 	indicator.BorderSizePixel = 0
 	indicator.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 	indicator.Parent = contents
@@ -44,9 +45,9 @@ return function(icon, Icon)
 	imageLabel.LayoutOrder = 2
 	imageLabel.ZIndex = 15
 	imageLabel.AnchorPoint = Vector2.new(0.5, 0.5)
-	imageLabel.Size = UDim2.new(0.5, 0, 0.5, 0)
+	imageLabel.Size = UDim2.fromScale(0.5, 0.5)
 	imageLabel.BackgroundTransparency = 1
-	imageLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
+	imageLabel.Position = UDim2.fromScale(0.5, 0.5)
 	imageLabel.Image = "rbxasset://textures/ui/Controls/XboxController/DPadUp@2x.png"
 	imageLabel.Parent = indicatorButton
 
@@ -63,7 +64,7 @@ return function(icon, Icon)
 			visibility = false
 		end
 		if visibility then
-			icon:modifyTheme({"PaddingRight", "Size", UDim2.new(0, 0, 1, 0)}, "IndicatorPadding")
+			icon:modifyTheme({"PaddingRight", "Size", UDim2.fromScale(0, 1)}, "IndicatorPadding")
 		elseif indicator.Visible then
 			icon:removeModification("IndicatorPadding")
 		end
@@ -82,7 +83,7 @@ return function(icon, Icon)
 
 	local function updateSize()
 		local ySize = widget.AbsoluteSize.Y*0.96
-		indicator.Size = UDim2.new(0, ySize, 0, ySize)
+		indicator.Size = UDim2.fromOffset(ySize, ySize)
 	end
 	widget:GetPropertyChangedSignal("AbsoluteSize"):Connect(updateSize)
 	updateSize()

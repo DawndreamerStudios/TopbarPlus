@@ -69,7 +69,7 @@ function Utility.copyTable(t)
 	assert(type(t) == "table", "First argument must be a table")
 	local tCopy = table.create(#t)
 	for k,v in pairs(t) do
-		if (type(v) == "table") then
+		if type(v) == "table" then
 			tCopy[k] = Utility.copyTable(v)
 		else
 			tCopy[k] = v
@@ -84,7 +84,7 @@ function Utility.generateUID(length)
 	local UID = ""
 	local list = validCharacters
 	local total = #list
-	for i = 1, length do
+	for _ = 1, length do
 		local randomCharacter = list[math.random(1, total)]
 		UID = UID..randomCharacter
 	end
@@ -112,10 +112,7 @@ function Utility.setVisible(instance, bool, sourceUID)
 	end
 	local isVisible = bool
 	if bool then
-		for sourceUID, _ in pairs(tracker) do
-			isVisible = false
-			break
-		end
+		isVisible = #tracker == 0
 	end
 	instance.Visible = isVisible
 end
@@ -225,7 +222,7 @@ function Utility.clipOutside(icon, instance)
 			local nextIconUID = ourUID
 			local shouldClipToParent = instance:GetAttribute("ClipToJoinedParent")
 			if shouldClipToParent then
-				for i = 1, 10 do -- This is safer than while true do and should never be > 4 parents
+				for _ = 1, 10 do -- This is safer than while true do and should never be > 4 parents
 					local nextIcon = Icon.getIconByUID(nextIconUID)
 					if not nextIcon then
 						break
@@ -431,8 +428,8 @@ function Utility.joinFeature(originalIcon, parentIcon, iconsArray, scrollingFram
 			end
 		end
 		local Icon = require(originalIcon.iconModule)
-		local parentIcon = Icon.getIconByUID(originalIcon.parentIconUID)
-		if not parentIcon then
+		local parentIconByUID = Icon.getIconByUID(originalIcon.parentIconUID)
+		if not parentIconByUID then
 			return
 		end
 		originalIcon:setAlignment(originalIcon.originalAlignment)
@@ -441,15 +438,11 @@ function Utility.joinFeature(originalIcon, parentIcon, iconsArray, scrollingFram
 		--originalIcon:setBehaviour("IconButton", "BackgroundTransparency", nil, true)
 		originalIcon:removeModification("JoinModification")
 		
-		local parentHasNoChildren = true
-		local parentChildIcons = parentIcon.childIconsDict
+		local parentChildIcons = parentIconByUID.childIconsDict
 		parentChildIcons[originalIconUID] = nil
-		for childIconUID, _ in pairs(parentChildIcons) do
-			parentHasNoChildren = false
-			break
-		end
-		if parentHasNoChildren and not parentIcon.isAnOverflow then
-			parentIcon:setEnabled(false)
+		local parentHasNoChildren = #parentChildIcons == 0
+		if parentHasNoChildren and not parentIconByUID.isAnOverflow then
+			parentIconByUID:setEnabled(false)
 		end
 		updateAlignent()
 

@@ -406,7 +406,7 @@ function Icon.new()
 	local sourcePath = string.split(source, ".")
 	local origin = game
 	local originsScreenGui
-	for i, sourceName in pairs(sourcePath) do
+	for _, sourceName in pairs(sourcePath) do
 		origin = origin:FindFirstChild(sourceName)
 		if not origin then
 			break
@@ -653,9 +653,11 @@ function Icon:updateParent(typeOfUpdate:string)
 		parentIcon.updateSize:Fire()
 		if parentIcon.isGroupHandler and typeOfUpdate == "setEnabled" then
 			local visibleIcons = 0
-			for i, otherIconUID in parentIcon.menuIcons do
+			for _, otherIconUID in parentIcon.menuIcons do
 				local otherIcon = Icon.getIconByUID(otherIconUID)
-				if otherIcon.isEnabled then visibleIcons += 1 end
+				if otherIcon.isEnabled then
+					visibleIcons += 1
+				end
 			end
 			
 			local wantedVisible = visibleIcons > 0
@@ -920,7 +922,7 @@ function Icon:_updateSelectionInstances()
 	end
 end
 
-function Icon:_setToggleItemsVisible(bool, fromSource, sourceIcon)
+function Icon:_setToggleItemsVisible(bool, _, sourceIcon)
 	for toggleItem, _ in pairs(self.toggleItems) do
 		if not sourceIcon or sourceIcon == self or sourceIcon.toggleItems[toggleItem] == nil then
 			local property = "Visible"
@@ -1158,7 +1160,7 @@ function Icon:convertLabelToNumberSpinner(numberSpinner, callback)
 		numberSpinner.Parent = label.Parent
 		numberSpinner.Size = UDim2.fromScale(1, 1)
 		numberSpinner.AnchorPoint = Vector2.new(0.5, 0.5)
-		numberSpinner.Position = UDim2.new(0.5, 0, 0.5, 0)
+		numberSpinner.Position = UDim2.fromScale(0.5, 0.5)
 		numberSpinner.TextXAlignment = Enum.TextXAlignment.Center
 		numberSpinner.ClipsDescendants = false
 
@@ -1184,7 +1186,7 @@ function Icon:convertLabelToNumberSpinner(numberSpinner, callback)
 		local function getSpinnerSizeAndDigitCount()
 			local TotalSize = 0
 			local numOfDigits = 0
-			for i, child in numberSpinner.Frame:GetChildren() do
+			for _, child in numberSpinner.Frame:GetChildren() do
 				local name = string.lower(child.Name)
 				if name == "digit" then
 					TotalSize += child.AbsoluteSize.X

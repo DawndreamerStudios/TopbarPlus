@@ -6,7 +6,7 @@
 
 return {
 	{"Selection", "Size", UDim2.new(1, -6, 1, -5)},
-	{"Selection", "Position", UDim2.new(0, 3, 0, 3)},
+	{"Selection", "Position", UDim2.fromOffset(3, 3)},
 	
 	{"Widget", "MinimumWidth", 32, "Deselected"},
 	{"Widget", "MinimumHeight", 32, "Deselected"},
@@ -16,7 +16,7 @@ return {
 	{"IconLabel", "TextSize", 14, "Deselected"},
 	{"Dropdown", "BackgroundTransparency", 0.5, "Deselected"},
 	{"Notice", "Position", UDim2.new(1, -12, 0, -3), "Deselected"},
-	{"Notice", "Size", UDim2.new(0, 15, 0, 15), "Deselected"},
+	{"Notice", "Size", UDim2.fromOffset(15, 15), "Deselected"},
 	{"NoticeLabel", "TextSize", 11, "Deselected"},
 	
 	{"IconSpot", "BackgroundColor3", Color3.fromRGB(0, 0, 0), "Selected"},
