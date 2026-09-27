@@ -29,6 +29,7 @@ function Gamepad.start(incomingIcon)
 	Icon = incomingIcon
 	Icon.highlightKey = if Icon.highlightKey ~= nil then Icon.highlightKey else DEFAULT_HIGHLIGHT_KEY -- What controller key to highlight the topbar (or set to false to disable)
 	Icon.highlightIcon = false -- Change to a specific icon if you'd like to highlight a specific icon instead of the left-most
+	Icon.canResetCursor = true
 	
 	-- We defer so the developer can make changes before the
 	-- gamepad controls are initialized
@@ -120,10 +121,6 @@ function Gamepad.start(incomingIcon)
 			end
 			local iconToHighlight = Gamepad.getIconToHighlight()
 			if iconToHighlight then
-				if GamepadService.GamepadCursorEnabled then
-					task.wait(0.2)
-					GamepadService:DisableGamepadCursor()
-				end
 				local clickRegion = iconToHighlight:getInstance("ClickRegion")
 				GuiService.SelectedObject = clickRegion
 			end
@@ -169,17 +166,22 @@ function Gamepad.registerButton(buttonInstance)
 		inputBegan = false
 	end)
 	local connection = UserInputService.InputBegan:Connect(function(input)
-		task.wait()
 		if input.KeyCode == Enum.KeyCode.ButtonA and inputBegan then
-			-- We focus on an icon when selected via the virtual cursor
-			task.wait(0.2)
-			GamepadService:DisableGamepadCursor()
-			GuiService.SelectedObject = buttonInstance
-			return
+			if Icon.canResetCursor then
+				-- We focus on an icon when selected via the virtual cursor
+				task.wait(0.2)
+				GamepadService:DisableGamepadCursor()
+				GuiService.SelectedObject = buttonInstance
+				return
+			end
 		end
 		local isSelected = GuiService.SelectedObject == buttonInstance
 		local unselectKeyCodes = {"ButtonB", "ButtonSelect"}
 		local keyName = input.KeyCode.Name
+		if input.KeyCode == Enum.KeyCode.ButtonSelect and Icon.highlightKey == false and isSelected then
+			GuiService.SelectedObject = nil
+			return;
+		end
 		if table.find(unselectKeyCodes, keyName) and isSelected then
 			-- We unfocus when back button is pressed, but ignore
 			-- if the virtual cursor is disabled otherwise it will be

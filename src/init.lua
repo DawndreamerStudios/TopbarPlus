@@ -742,6 +742,7 @@ function Icon:setEnabled(bool)
 	self.enabled = self.isEnabled
 	self.widget.Visible = bool
 	self:updateParent("setEnabled")
+	Icon.iconChanged:Fire(self)
 	return self
 end
 
