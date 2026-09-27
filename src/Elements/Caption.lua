@@ -1,6 +1,11 @@
-local CAPTION_COLOR = Color3.fromRGB(39, 41, 48)
 local TEXT_SIZE = 15
+local CONSTANT_CAPTION_BLACK = Color3.fromRGB(39, 41, 48)
+local CONSTANT_CAPTION_WHITE = Color3.fromRGB(247, 247, 248)
 return function(icon)
+	local Icon = require(icon.iconModule)
+
+	local CAPTION_COLOR = Icon.playtestMode and CONSTANT_CAPTION_WHITE or CONSTANT_CAPTION_BLACK
+	local CAPTION_TEXT_COLOR = Icon.playtestMode and CONSTANT_CAPTION_BLACK or CONSTANT_CAPTION_WHITE
 
 	-- Credit to lolmansReturn and Canary Software for
 	-- retrieving these values
@@ -32,7 +37,7 @@ return function(icon)
 		Enum.FontStyle.Normal
 	)
 	header.Text = "Caption"
-	header.TextColor3 = Color3.fromRGB(255, 255, 255)
+	header.TextColor3 = CAPTION_TEXT_COLOR
 	header.TextSize = TEXT_SIZE
 	header.TextTruncate = Enum.TextTruncate.None
 	header.TextWrapped = false
@@ -85,7 +90,8 @@ return function(icon)
 	local keyTag1 = Instance.new("ImageLabel")
 	keyTag1.Name = "Key1"
 	keyTag1.Image = "rbxasset://textures/ui/Controls/key_single.png"
-	keyTag1.ImageTransparency = 0.7
+	keyTag1.ImageColor3 = CAPTION_TEXT_COLOR
+	keyTag1.ImageTransparency = Icon.playtestMode and 0.3 or 0.7
 	keyTag1.ScaleType = Enum.ScaleType.Slice
 	keyTag1.SliceCenter = Rect.new(5, 5, 23, 24)
 	keyTag1.AutomaticSize = Enum.AutomaticSize.X
@@ -110,7 +116,8 @@ return function(icon)
 		Enum.FontStyle.Normal
 	)
 	labelContent.Text = ""
-	labelContent.TextColor3 = Color3.fromRGB(189, 190, 190)
+	labelContent.TextColor3 = CAPTION_TEXT_COLOR
+	labelContent.TextTransparency = Icon.playtestMode and 0.3 or 0.5
 	labelContent.TextSize = TEXT_SIZE
 	labelContent.AutomaticSize = Enum.AutomaticSize.X
 	labelContent.BackgroundTransparency = 1
@@ -176,7 +183,7 @@ return function(icon)
 		captionHeader.Text = text
 		captionHeader.Visible = not hideHeader
 		if keyCodeEnum then
-			labelContent.Text = keyCodeEnum.Name
+			labelContent.Text = UserInputService:GetStringForKeyCode(keyCodeEnum)
 			hotkeys.Visible = true
 		end
 		if not hasKeyboard then

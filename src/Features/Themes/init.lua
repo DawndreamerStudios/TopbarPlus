@@ -8,7 +8,7 @@
 -- LOCAL
 local Themes = {}
 local Utility = require(script.Parent.Parent.Utility)
-local baseTheme = require(script.Default)
+local baseTheme = script.Default
 
 
 
@@ -280,6 +280,8 @@ function Themes.statesMatch(state1, state2)
 end
 
 function Themes.rebuild(icon)
+	local Icon = require(icon.iconModule)
+
 	-- A note for my future self: this code can be optimised further by
 	-- converting appearance into a instanceName-property dictionary
 	-- as apposed to an array of every potential change. When converting
@@ -297,6 +299,14 @@ function Themes.rebuild(icon)
 				if not theme then
 					return
 				end
+				if typeof(theme) == "Instance" and theme.ClassName == "ModuleScript" then
+					theme = require(theme);
+				end
+
+				if typeof(theme) == "function" then
+					theme = theme(Icon.playtestMode)
+				end
+
 				for _, detail in pairs(theme) do
 					local modificationsUID = detail[5]
 					local detailStateName = detail[4]

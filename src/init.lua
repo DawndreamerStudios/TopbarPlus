@@ -35,8 +35,10 @@
 
 
 -- SERVICES
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 local ContentProvider = game:GetService("ContentProvider")
+local RunService = game:GetService("RunService")
 local StarterGui = game:GetService("StarterGui")
 local Players = game:GetService("Players")
 local Types = require(script.Types)
@@ -94,7 +96,7 @@ local preferredInput = {
 -- PUBLIC VARIABLES
 Icon.baseDisplayOrderChanged = Signal.new()
 Icon.baseDisplayOrder = 10
-Icon.baseTheme = require(themes.Default)
+Icon.baseTheme = themes.Default
 Icon.isOldTopbar = false -- Logic has been moved to Container
 Icon.iconsDictionary = iconsDict
 Icon.groupHandlers = {}
@@ -105,7 +107,13 @@ Icon.iconAdded = Signal.new()
 Icon.iconRemoved = Signal.new()
 Icon.iconChanged = Signal.new()
 
+local getGameInfoRemote = ReplicatedStorage:WaitForChild("_TopbarPlusGetGameInfo", 10)
+if getGameInfoRemote then
+	Icon.gameInfo = getGameInfoRemote:InvokeServer()
+end
 
+-- Playtest mode is when you are on a private game and outside studio apparently from my testing
+Icon.playtestMode = not RunService:IsStudio() and Icon.gameInfo.IsPrivate
 
 -- PUBLIC FUNCTIONS
 function Icon.getIcons(filterGroups: boolean?)
@@ -155,6 +163,13 @@ function Icon.setTopbarEnabled(bool, isInternal)
 end
 
 function Icon.modifyBaseTheme(modifications)
+	if typeof(modifications) == "Instance" and modifications.ClassName == "ModuleScript" then
+		modifications = require(modifications);
+	end
+
+	if typeof(modifications) == "function" then
+		modifications = modifications(Icon.playtestMode)
+	end
 	modifications = Themes.getModifications(modifications)
 	for _, modification in pairs(modifications) do
 		for _, detail in pairs(Icon.baseTheme) do
@@ -711,6 +726,13 @@ function Icon:removeModificationWith(instanceName, property, state)
 end
 
 function Icon:setTheme(theme)
+	if typeof(theme) == "Instance" and theme.ClassName == "ModuleScript" then
+		theme = require(theme);
+	end
+
+	if typeof(theme) == "function" then
+		theme = theme(Icon.playtestMode)
+	end
 	Themes.set(self, theme)
 	return self
 end

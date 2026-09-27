@@ -50,8 +50,7 @@ return function(Icon)
 			task.defer(function()
 				-- If oldtopbar, apply the Classic theme
 				local themes = script.Parent.Parent.Features.Themes
-				local Classic = require(themes.Classic)
-				Icon.modifyBaseTheme(Classic)
+				Icon.modifyBaseTheme(themes.Classic)
 
 				-- Also configure the oldtopbar correctly
 				local function decideToHideTopbar()
