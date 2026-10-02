@@ -1104,10 +1104,14 @@ function Icon:setGroup(name: string)
 	
 	local groupHandler = Icon.groupHandlers[name]
 	if groupHandler == nil then
+		local iconSpot = self:getInstance("IconSpot")
+		
 		groupHandler = Icon.new()
 			:align(self.alignment)
 			:setLabel(name)
 			:lock()
+		
+		groupHandler:setOrder(iconSpot.LayoutOrder / 100)
 		groupHandler.isGroupHandler = true
 			
 		Icon.groupHandlers[name] = groupHandler
